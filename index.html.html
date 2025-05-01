@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Stress Tester | Phone Performance Tool</title>
+    <meta name="description" content="Test your phone's call handling capabilities with our stress testing tool. Simulate multiple incoming calls to evaluate performance.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Tool Container */
+        .tool-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .tool-container:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--light);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Level Cards */
+        .level-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .level-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--light-gray);
+            text-align: center;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .level-card.selected {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .level-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .level-card .level-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .level-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Results Section */
+        .results {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: var(--light-gray);
+            border-radius: 6px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Log Output */
+        .log-container {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--light-gray);
+        }
+
+        .log-entry {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-entry.success {
+            color: var(--success);
+        }
+
+        .log-entry.error {
+            color: var(--danger);
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-warning {
+            background-color: rgba(248, 150, 30, 0.1);
+            border-left: 4px solid var(--warning);
+            color: var(--dark);
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .level-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .tool-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-phone-alt"></i>
+                <span>CallTester Pro</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#"><i class="fas fa-tools"></i> Tools</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Phone Call Stress Tester</h1>
+            <p>Evaluate your device's performance under high call volume conditions with our advanced simulation tool. Perfect for testing call handling capabilities and network reliability.</p>
+        </section>
+
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>Important Notice:</strong> This tool simulates call scenarios for testing purposes only. Actual call bombing is illegal in most jurisdictions. Use responsibly and only with consent.
+            </div>
+        </div>
+
+        <section class="tool-container">
+            <h2 class="section-title">
+                <i class="fas fa-cog"></i>
+                Test Configuration
+            </h2>
+            
+            <form id="callTesterForm">
+                <div class="form-group">
+                    <label for="phoneNumber" class="form-label">Target Phone Number</label>
+                    <div style="position: relative;">
+                        <input type="tel" id="phoneNumber" class="form-control" placeholder="+1 (123) 456-7890" required>
+                        <small style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--gray);">
+                            <i class="fas fa-info-circle"></i> Country code required
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Test Intensity Level</label>
+                    <div class="level-cards">
+                        <div class="level-card" data-level="low">
+                            <div class="level-icon">
+                                <i class="fas fa-battery-quarter"></i>
+                            </div>
+                            <h3>Low Intensity</h3>
+                            <p>5 calls over 2 minutes</p>
+                            <p>Basic functionality test</p>
+                        </div>
+                        <div class="level-card" data-level="medium">
+                            <div class="level-icon">
+                                <i class="fas fa-battery-half"></i>
+                            </div>
+                            <h3>Medium Intensity</h3>
+                            <p>15 calls over 5 minutes</p>
+                            <p>Moderate traffic simulation</p>
+                        </div>
+                        <div class="level-card" data-level="high">
+                            <div class="level-icon">
+                                <i class="fas fa-battery-full"></i>
+                            </div>
+                            <h3>High Intensity</h3>
+                            <p>30 calls over 10 minutes</p>
+                            <p>Stress test your device</p>
+                        </div>
+                        <div class="level-card" data-level="custom">
+                            <div class="level-icon">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <h3>Custom Settings</h3>
+                            <p>Configure your own parameters</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedLevel" name="level" value="">
+                </div>
+                
+                <div class="form-group" id="customSettings" style="display: none;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <label for="callCount" class="form-label">Number of Calls</label>
+                            <input type="number" id="callCount" class="form-control" min="1" max="100" value="10">
+                        </div>
+                        <div>
+                            <label for="duration" class="form-label">Duration (minutes)</label>
+                            <input type="number" id="duration" class="form-control" min="1" max="60" value="5">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block" id="startBtn">
+                    <i class="fas fa-play"></i> Start Stress Test
+                </button>
+                <button type="button" class="btn btn-danger btn-block" id="stopBtn" style="display: none;">
+                    <i class="fas fa-stop"></i> Stop Test
+                </button>
+            </form>
+            
+            <div class="results" id="results">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Test Results
+                </h2>
+                
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3 id="callsMade">0</h3>
+                        <p>Calls Attempted</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="callsAnswered">0</h3>
+                        <p>Calls Answered</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="successRate">0%</h3>
+                        <p>Success Rate</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="timeRemaining">0:00</h3>
+                        <p>Time Remaining</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 1.5rem 0 1rem; font-size: 1.1rem; color: var(--primary);">
+                    <i class="fas fa-list"></i> Activity Log
+                </h3>
+                <div class="log-container" id="logOutput">
+                    <!-- Log entries will appear here -->
+                </div>
+            </div>
+        </section>
+        
+        <section class="tool-container" style="margin-top: 2rem;">
+            <h2 class="section-title">
+                <i class="fas fa-question-circle"></i>
+                How It Works
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-mobile-alt"></i> Device Testing
+                    </h3>
+                    <p>Our tool creates a simulated call environment to test how your device handles multiple incoming calls. This helps identify potential issues with call handling, battery drain, and thermal performance.</p>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-network-wired"></i> Network Evaluation
+                    </h3>
+                    <p>The simulation provides insights into your network's reliability during high traffic conditions. Monitor call success rates to evaluate your carrier's performance under stress.</p>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 1rem; color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-shield-alt"></i> Legal & Safe
+                    </h3>
+                    <p>This is a local simulation only. No actual calls are made to the number you provide. The tool is designed for legitimate testing purposes with no harmful effects.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>CallTester Pro</h3>
+                    <p>Advanced telephony testing tools for developers and quality assurance professionals.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-envelope"></i> support@calltester.com</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> +1 (555) 123-4567</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2023 CallTester Pro. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mainNav = document.getElementById('mainNav');
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+            });
+            
+            // Level selection
+            const levelCards = document.querySelectorAll('.level-card');
+            const selectedLevelInput = document.getElementById('selectedLevel');
+            const customSettings = document.getElementById('customSettings');
+            
+            levelCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    levelCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const level = this.getAttribute('data-level');
+                    selectedLevelInput.value = level;
+                    
+                    if (level === 'custom') {
+                        customSettings.style.display = 'block';
+                    } else {
+                        customSettings.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Form submission
+            const form = document.getElementById('callTesterForm');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const results = document.getElementById('results');
+            const progressBar = document.getElementById('progressBar');
+            const callsMadeElement = document.getElementById('callsMade');
+            const callsAnsweredElement = document.getElementById('callsAnswered');
+            const successRateElement = document.getElementById('successRate');
+            const timeRemainingElement = document.getElementById('timeRemaining');
+            const logOutput = document.getElementById('logOutput');
+            
+            let simulationInterval;
+            let totalCalls = 0;
+            let callsMade = 0;
+            let callsAnswered = 0;
+            let duration = 0;
+            let endTime = 0;
+            let callInterval = 0;
+            let timerInterval;
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const phoneNumber = document.getElementById('phoneNumber').value;
+                const level = selectedLevelInput.value;
+                
+                if (!phoneNumber) {
+                    showAlert('Please enter a phone number', 'error');
+                    return;
+                }
+                
+                if (!level) {
+                    showAlert('Please select a test intensity level', 'error');
+                    return;
+                }
+                
+                // Reset stats
+                callsMade = 0;
+                callsAnswered = 0;
+                logOutput.innerHTML = '';
+                
+                // Set parameters based on level
+                switch(level) {
+                    case 'low':
+                        totalCalls = 5;
+                        duration = 2 * 60 * 1000; // 2 minutes in ms
+                        break;
+                    case 'medium':
+                        totalCalls = 15;
+                        duration = 5 * 60 * 1000; // 5 minutes in ms
+                        break;
+                    case 'high':
+                        totalCalls = 30;
+                        duration = 10 * 60 * 1000; // 10 minutes in ms
+                        break;
+                    case 'custom':
+                        totalCalls = parseInt(document.getElementById('callCount').value);
+                        duration = parseInt(document.getElementById('duration').value) * 60 * 1000;
+                        break;
+                }
+                
+                callInterval = duration / totalCalls;
+                endTime = Date.now() + duration;
+                
+                // Update UI
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+                results.classList.add('active');
+                
+                // Add initial log entry
+                addLogEntry('Starting stress test simulation...', 'info');
+                addLogEntry(`Test configuration: ${totalCalls} calls over ${duration/60000} minutes`, 'info');
+                
+                // Start simulation
+                simulationInterval = setInterval(simulateCall, callInterval);
+                
+                // Initial call
+                simulateCall();
+                
+                // Update timer
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            });
+            
+            stopBtn.addEventListener('click', stopSimulation);
+            
+            function simulateCall() {
+                if (callsMade >= totalCalls) {
+                    stopSimulation();
+                    return;
+                }
+                
+                callsMade++;
+                callsMadeElement.textContent = callsMade;
+                
+                // Random chance of call being "answered" (30-70% chance)
+                const answered = Math.random() < (0.3 + Math.random() * 0.4);
+                if (answered) {
+                    callsAnswered++;
+                    callsAnsweredElement.textContent = callsAnswered;
+                }
+                
+                // Update success rate
+                const successRate = Math.round((callsAnswered / callsMade) * 100);
+                successRateElement.textContent = `${successRate}%`;
+                
+                // Log the call
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                addLogEntry(`Call ${callsMade}/${totalCalls}: ${answered ? 'Answered successfully' : 'Not answered'}`, answered ? 'success' : 'error');
+            }
+            
+            function updateTimer() {
+                const remaining = Math.max(0, endTime - Date.now());
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    stopSimulation();
+                    return;
+                }
+                
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                timeRemainingElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Update progress bar
+                const progress = ((duration - remaining) / duration) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            function stopSimulation() {
+                clearInterval(simulationInterval);
+                clearInterval(timerInterval);
+                startBtn.style.display = 'block';
+                stopBtn.style.display = 'none';
+                
+                // Final log message
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                addLogEntry(`Simulation completed. ${callsMade} calls attempted, ${callsAnswered} answered (${Math.round((callsAnswered/callsMade)*100)}% success rate)`, 'info');
+            }
+            
+            function addLogEntry(message, type = 'info') {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${type}`;
+                logEntry.innerHTML = `<span style="color: var(--gray);">[${timeString}]</span> ${message}`;
+                logOutput.appendChild(logEntry);
+                logOutput.scrollTop = logOutput.scrollHeight;
+            }
+            
+            function showAlert(message, type = 'info') {
+                // In a real app, you'd show a nice alert/toast here
+                alert(message);
+            }
+        });
+    </script>
+</body>
+</html>
